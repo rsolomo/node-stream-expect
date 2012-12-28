@@ -1,12 +1,12 @@
 {
-  "name": "pty-expect",
+  "name": "stream-expect",
   "version": "0.0.0",
-  "description": "TBD",
+  "description": "Interact with streams using expect",
   "main": "./index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha -R dot"
   },
-  "repository": "",
+  "repository": "https://github.com/rsolomo/node-stream-expect.git",
   "keywords": [
     "expect",
     "pty"

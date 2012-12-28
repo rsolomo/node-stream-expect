@@ -1,0 +1,23 @@
+{
+  "name": "pty-expect",
+  "version": "0.0.0",
+  "description": "TBD",
+  "main": "./index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": "",
+  "keywords": [
+    "expect",
+    "pty"
+  ],
+  "author": "Ray Solomon <raybsolomon@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "~1.7.4",
+    "sinon": "~1.5.2"
+  },
+  "dependencies": {
+    "pty.js": "~0.1.2"
+  }
+}

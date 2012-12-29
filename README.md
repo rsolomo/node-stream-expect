@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rsolomo/node-stream-expect.png)](https://travis-ci.org/rsolomo/node-stream-expect)
+
 node-stream-expect
 ==================
 

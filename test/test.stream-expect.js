@@ -1,25 +1,24 @@
 var assert = require('assert')
+var stream = require('stream')
 var path = require('path')
 var mocha = require('mocha')
 var sinon = require('sinon')
-var pty = require('pty.js')
 var expect = require('../index')
 
-var Terminal = pty.Terminal
 var Expect = expect.Expect
 
-describe('pty-expect', function() {
+describe('stream-expect', function() {
   describe('#spawn()', function() {
     it('should return an instance of Expect', function() {
-      var exp = expect.spawn()
-      assert.ok(exp instanceof expect.Expect)
+      var exp = expect.spawn('ls')
+      assert.ok(exp instanceof Expect)
     })
   })
   
   describe('#init()', function() {
     it('should return an instance of Expect', function() {
-      var exp = expect.init()
-      assert.ok(exp instanceof expect.Expect)
+      var exp = expect.init(new stream.Stream(), new stream.Stream())
+      assert.ok(exp instanceof Expect)
     })
   })
   
@@ -53,12 +52,12 @@ describe('pty-expect', function() {
   })
   
   describe('#send()', function() {
-    var exp
+    var exp, stub
     beforeEach(function() {
       exp = expect.spawn('ls')
+      stub = sinon.stub(exp._wStream, 'write')
     })
-    it('should call stream.write', function() {
-      var stub = sinon.stub(exp._stream, 'write')
+    it('should write to the Writeable Stream', function() {
       exp.send('ls\n')
       assert.ok(stub.calledWith('ls\n'))
     })
@@ -68,28 +67,21 @@ describe('pty-expect', function() {
     })
   })
   
-  describe('#before()', function() {
-    var exp
-    beforeEach(function(done) {
-      exp = expect.spawn(path.join(__dirname, 'fixtures', 'hello.js'))
-      done()
-    })
-    it('should return a string', function() {
-      var str = exp.before()
-      assert.equal(typeof str, 'string')
-    })
-  })
-  
   describe('#onData()', function() {
     var exp
     beforeEach(function(done) {
       exp = expect.spawn(path.join(__dirname, 'fixtures', 'hello.js'))
       done()
     })
-    it('should push data to before', function() {
+    it('should push string type chunks to before', function() {
       exp.onData('some text\n')
       exp.onData('more text\n')
-      assert.equal(exp._before, 'some text\n' + 'more text\n')
+      assert.equal(exp.before, 'some text\n' + 'more text\n')
+    })
+    it('should push buffer type chunks to before', function() {
+      exp.onData(new Buffer('some text\n'))
+      exp.onData(new Buffer('more text\n'))
+      assert.equal(exp.before, 'some text\n' + 'more text\n')
     })
   })
 })

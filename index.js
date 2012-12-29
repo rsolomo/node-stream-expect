@@ -1,17 +1,14 @@
-var util = require('util')
-var pty = require('pty.js')
+var cp = require('child_process')
 
-function Expect(file, args, opt) {
-  pty.Terminal.call(this, file, args, opt)
-  this._stream = this
-  this._before = ''
-  this.on('data', this.onData.bind(this))
+function Expect(readStream, writeStream) {
+  this._rStream = readStream
+  this._wStream = writeStream
+  this.before = ''
+  this._rStream.on('data', this.onData.bind(this))
 }
 
-util.inherits(Expect, pty.Terminal)
-
-Expect.prototype.onData = function(data) {
-  this._before += data
+Expect.prototype.onData = function(chunk) {
+  this.before += chunk
 }
 
 Expect.prototype.expect = function(pattern, callback) {
@@ -19,38 +16,37 @@ Expect.prototype.expect = function(pattern, callback) {
   
   var timeoutId = setTimeout(function() {
     var err = new Error('Expect timed out.')
-    self._stream.removeListener('data', matcher)
+    self._rStream.removeListener('data', matcher)
     callback(err)
   }, 10000)
 
-  function matcher(data) {
-    if (data.match(pattern)) {
-      this._stream.removeListener('data', matcher)
+  function matcher(self, str) {
+    if (str.match(pattern)) {
+      self._rStream.removeListener('data', matcher)
       //this._before = ''
       clearTimeout(timeoutId)
-      callback(null, self)
+      callback(null, str)
     }
   }
   
-  this._stream.on('data', matcher.bind(this))
+  this._rStream.on('data', function(chunk) {
+    matcher(self, chunk.toString())
+  })
   return this
 }
 
 Expect.prototype.send = function(string) {
-  this._stream.write(string)
+  this._wStream.write(string)
   return this
 }
 
-Expect.prototype.before = function() {
-  return this._before
+exports.spawn = function(command, args, options) {
+  var child = cp.spawn(command, args, options)
+  return new Expect(child.stdout, child.stdin)
 }
 
-exports.spawn = function(file, args, opt) {
-  return new Expect(file, args, opt)
-}
-
-exports.init = function(file, args, opt) {
-  return new Expect(file, args, opt)
+exports.init = function(readStream, writeStream) {
+  return new Expect(readStream, writeStream)
 } 
 
 exports.Expect = Expect

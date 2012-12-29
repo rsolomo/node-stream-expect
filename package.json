@@ -16,8 +16,5 @@
   "devDependencies": {
     "mocha": "~1.7.4",
     "sinon": "~1.5.2"
-  },
-  "dependencies": {
-    "pty.js": "~0.1.2"
   }
 }

@@ -32,11 +32,6 @@ describe('stream-expect', function() {
   })
   
   describe('#expect()', function() {
-    var exp, clock
-    beforeEach(function(done) {
-      exp = expect.spawn('node', [fixture])
-      done()
-    })
     it('should return an Expect object', function() {
       var obj = exp.expect(/./, function(){})
       assert.ok(obj instanceof Expect)
@@ -116,9 +111,5 @@ describe('stream-expect', function() {
       exp.logger('some text')
       assert.ok(stream.write.called)
     })
-  })
-  
-  describe('#line()', function() {
-    
   })
 })

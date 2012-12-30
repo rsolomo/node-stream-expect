@@ -14,11 +14,11 @@ var exp = expect.init(term, term)
 // Expect shell prompt
 exp.expect(/> |\$ |# /, function(err, output, results) {
   if (err) throw err
-  console.log('OUTPUT : ' + output)
+  console.log('OUTPUT ---\n' + output)
   exp.send('echo "hi"\n')
   exp.expect(/> |\$ |# /, function(err, output, results) {
       if (err) throw err
-      console.log('OUTPUT : ' + output)
+      console.log('OUTPUT ---\n' + output)
       term.destroy()
     })
 })

@@ -4,7 +4,7 @@
   "description": "Interact with streams using expect",
   "main": "./index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha -R dot"
+    "test": "mocha -R dot"
   },
   "repository": "https://github.com/rsolomo/node-stream-expect.git",
   "keywords": [

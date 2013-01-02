@@ -6,6 +6,7 @@ var expect = require('../index')
 
 var Expect = expect.Expect
 var fixture = path.join(__dirname, 'fixtures', 'lorem-ipsum.js')
+var SECOND = 1000
 
 describe('stream-expect', function() {
   var exp
@@ -54,7 +55,7 @@ describe('stream-expect', function() {
         assert.ok(err instanceof Error)
         done()
       })
-      clock.tick(60 * 1000)
+      clock.tick(60 * SECOND)
       clock.restore()
     })
     it('should remove the listener on timeout', function(done) {
@@ -65,7 +66,7 @@ describe('stream-expect', function() {
         assert.equal(nListeners.length, listeners.length)
         done()
       })
-      clock.tick(60 * 1000)
+      clock.tick(60 * SECOND)
       clock.restore()
     })
     it('output should contain output since expect was called', function(done) {
@@ -85,17 +86,29 @@ describe('stream-expect', function() {
       })
     })
     it('results should be a regex array', function(done) {
-      var obj = exp.expect(/minim/, function(err, output, results) {
+      exp.expect(/minim/, function(err, output, results) {
         assert.ok(results instanceof Array)
         done()
       })
     })
+    it('timeout should be determined by this.timeout', function() {
+      var clock = sinon.useFakeTimers()
+      var stub = sinon.stub()
+      exp.timeout = 7 * SECOND
+      exp.expect(/nothing/, stub)
+      
+      clock.tick(6 * SECOND)
+      assert.ok(stub.notCalled)
+      
+      clock.tick(1 * SECOND)
+      assert.ok(stub.called)
+      clock.restore()
+    })
   })
   
   describe('#send()', function() {
-    var exp, stub
+    var stub
     beforeEach(function() {
-      exp = expect.spawn('node', [fixture])
       stub = sinon.stub(exp._wStream, 'write')
     })
    it('should return an Expect object', function() {

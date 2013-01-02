@@ -5,6 +5,7 @@ var EventEmitter = require('events').EventEmitter
 function Expect(readStream, writeStream, options) {
   var opts = options || {} 
   var self = this
+  this.timeout = opts.timeout || 10000
   this.child = opts.process || null
   this._rStream = readStream
   this._wStream = writeStream
@@ -21,9 +22,9 @@ Expect.prototype.expect = function(pattern, callback) {
   var output = ''
   
   var timeoutId = setTimeout(function() {
-    var err = new Error('Expect timed out.')
+    var err = new Error('Expect timed out after ' + self.timeout + 'ms')
     return done(err)
-  }, 10000)
+  }, self.timeout)
   
   function expListener (chunk) {
     var str = chunk.toString()

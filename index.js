@@ -3,12 +3,23 @@ var util = require('util')
 var EventEmitter = require('events').EventEmitter
 
 function Expect(readStream, writeStream, options) {
-  var opts = options || {} 
   var self = this
+  var opts
+  
+  if (!arguments[1]) {
+    this._wStream = readStream
+    opts = {}
+  } else if (!arguments[1].write) {
+    this._wStream = readStream
+    opts = arguments[1]
+  } else {
+    this._wStream = arguments[1]
+    opts = options || {}
+  }
+  
   this.timeout = opts.timeout || 10000
   this.child = opts.process || null
   this._rStream = readStream
-  this._wStream = writeStream
 
   this._rStream.on('data', function(chunk) {
     self.emit('data', chunk.toString())

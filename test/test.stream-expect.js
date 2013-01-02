@@ -28,6 +28,42 @@ describe('stream-expect', function() {
       var exp = expect.createExpect(child.stdout, child.stdin)
       assert.ok(exp instanceof Expect)
     })
+    it('accepts the createExpect(ReadStream, WriteStream, options) signature', function() {
+      var readStream = {
+        on : function() {},
+        readable : true
+      }
+      var writeStream = {
+        writeable : true,
+        write : function() {}
+      }
+      var exp = expect.createExpect(readStream, writeStream, { timeout: 1000 })
+      assert.equal(exp._rStream, readStream)
+      assert.equal(exp._wStream, writeStream)
+      assert.equal(exp.timeout, 1000)
+    })
+    it('accepts the createExpect(stream, options) signature', function() {
+      var stream = {
+        on : function() {},
+        writeable : true,
+        readable : true,
+        write : function() {}
+      }
+      var exp = expect.createExpect(stream, { timeout: 1000 })
+      assert.equal(exp._rStream, stream)
+      assert.equal(exp._wStream, stream)
+      assert.equal(exp.timeout, 1000)
+    })
+    it('accepts the createExpect(stream) signature', function() {
+      var stream = {
+        on : function() {},
+        writeable : true,
+        readable : true
+      }
+      var exp = expect.createExpect(stream)
+      assert.equal(exp._rStream, stream)
+      assert.equal(exp._wStream, stream)
+    })
   })
   
   describe('#expect()', function() {

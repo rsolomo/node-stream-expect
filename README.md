@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rsolomo/node-stream-expect.png)](https://travis-ci.org/rsolomo/node-stream-expect)
+[![Build Status](https://travis-ci.org/rsolomo/node-stream-expect.png?branch=master)](https://travis-ci.org/rsolomo/node-stream-expect)
 
 node-stream-expect
 ==================

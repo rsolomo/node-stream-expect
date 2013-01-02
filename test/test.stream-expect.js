@@ -1,8 +1,6 @@
 var assert = require('assert')
-var os = require('os')
 var spawn = require('child_process').spawn
 var path = require('path')
-var mocha = require('mocha')
 var sinon = require('sinon')
 var expect = require('../index')
 
@@ -23,10 +21,10 @@ describe('stream-expect', function() {
     })
   })
   
-  describe('#init()', function() {
+  describe('#createExpect()', function() {
     it('should return an instance of Expect', function() {
       var child = spawn('node', [fixture])
-      var exp = expect.init(child.stdout, child.stdin)
+      var exp = expect.createExpect(child.stdout, child.stdin)
       assert.ok(exp instanceof Expect)
     })
   })
@@ -43,9 +41,9 @@ describe('stream-expect', function() {
       })
     })
     it('should remove the listener on pattern match', function(done) {
-      var listeners = exp._rStream.listeners('data').slice(0)
+      var listeners = exp.listeners('data').slice(0)
       exp.expect(/ipsum/, function(err, match) {
-        var nListeners = exp._rStream.listeners('data').slice(0)
+        var nListeners = exp.listeners('data').slice(0)
         assert.equal(nListeners.length, listeners.length)
         done()
       })
@@ -61,9 +59,9 @@ describe('stream-expect', function() {
     })
     it('should remove the listener on timeout', function(done) {
       var clock = sinon.useFakeTimers()
-      var listeners = exp._rStream.listeners('data').slice(0)
+      var listeners = exp.listeners('data').slice(0)
       exp.expect(/nothing/, function(err) {
-        var nListeners = exp._rStream.listeners('data').slice(0)
+        var nListeners = exp.listeners('data').slice(0)
         assert.equal(nListeners.length, listeners.length)
         done()
       })
@@ -71,15 +69,23 @@ describe('stream-expect', function() {
       clock.restore()
     })
     it('output should contain output since expect was called', function(done) {
-      var lines = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do'
-        + os.EOL + 'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad'
-      var obj = exp.expect(/minim/, function(err, output, results) {
-        assert.notEqual(output.indexOf(lines), -1)
+      var str = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do\n'
+        + 'tempor incididunt ut labore et dolore magna aliqua. Ut enim ad\n'
+        + 'minim veniam'
+      exp.expect(/veniam/, function(err, output, results) {
+        assert.equal(output, str)
+        done()
+      })
+    })
+    it('matches are non-greedy', function(done) {
+      var firstChar = 'L'
+      exp.expect(/.*/, function(err, output, results) {
+        assert.equal(results.input, firstChar)
         done()
       })
     })
     it('results should be a regex array', function(done) {
-      var obj = exp.expect(/^minim/m, function(err, output, results) {
+      var obj = exp.expect(/minim/, function(err, output, results) {
         assert.ok(results instanceof Array)
         done()
       })
@@ -92,24 +98,13 @@ describe('stream-expect', function() {
       exp = expect.spawn('node', [fixture])
       stub = sinon.stub(exp._wStream, 'write')
     })
-    it('should return an Expect object', function() {
-      var obj = exp.send('ls\n')
-      assert.ok(obj instanceof Expect)
-    })
-    it('should write to the Writeable Stream', function() {
+   it('should return an Expect object', function() {
+     var obj = exp.send('ls\n')
+     assert.ok(obj instanceof Expect)
+   })
+    it('should write to the writeable Stream', function() {
       exp.send('ls\n')
       assert.ok(stub.calledWith('ls\n'))
-    })
-  })
-  
-  describe('#logger()', function() {
-    it('should write to log stream', function() {
-      var stream = {
-        write : sinon.stub()
-      }
-      var exp = expect.spawn('node', [fixture], {log : stream})
-      exp.logger('some text')
-      assert.ok(stream.write.called)
     })
   })
 })

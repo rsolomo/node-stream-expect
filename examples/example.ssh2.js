@@ -13,14 +13,14 @@ c.on('ready', function() {
     if (err) throw err
     console.log(stream)
     // Use ssh Connection as read and write stream
-    var exp = expect.createExpect(stream, stream)
+    var exp = expect.createExpect(stream)
     
     // Expect shell prompt
-    exp.expect(/> |\$ |# /, function(err, output, results) {
+    exp.expect(/> |\$ |# /, function(err, output, match) {
       if (err) throw err
       console.log('OUTPUT:\n' + output)
       exp.send('echo "hi"\n')
-      exp.expect(/> |\$ |# /, function(err, output, results) {
+      exp.expect(/> |\$ |# /, function(err, output, match) {
           if (err) throw err
           console.log('OUTPUT:\n' + output)
           stream.destroy()

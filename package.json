@@ -1,6 +1,6 @@
 {
   "name": "stream-expect",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Interact with streams using expect",
   "main": "./index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   "repository": "https://github.com/rsolomo/node-stream-expect.git",
   "keywords": [
     "expect",
-    "pty"
+    "stream"
   ],
   "author": "Ray Solomon <raybsolomon@gmail.com>",
   "license": "MIT",

@@ -15,7 +15,7 @@ var exp = expect.createExpect(term)
 exp.expect(/> |\$ |# /, function(err, output, match) {
   if (err) throw err
   console.log('OUTPUT:\n' + output)
-  exp.send('echo "hi"\n')
+  exp.send('ls\n')
   exp.expect(/> |\$ |# /, function(err, output, match) {
       if (err) throw err
       console.log('OUTPUT:\n' + output)

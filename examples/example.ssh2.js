@@ -11,7 +11,7 @@ var c = new Connection()
 c.on('ready', function() {
   c.shell(function(err, stream) {
     if (err) throw err
-    console.log(stream)
+
     // Use ssh Connection as read and write stream
     var exp = expect.createExpect(stream)
     
@@ -19,7 +19,7 @@ c.on('ready', function() {
     exp.expect(/> |\$ |# /, function(err, output, match) {
       if (err) throw err
       console.log('OUTPUT:\n' + output)
-      exp.send('echo "hi"\n')
+      exp.send('ls\n')
       exp.expect(/> |\$ |# /, function(err, output, match) {
           if (err) throw err
           console.log('OUTPUT:\n' + output)

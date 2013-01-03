@@ -1,6 +1,5 @@
-var cp = require('child_process')
+var childProcess = require('child_process')
 var util = require('util')
-var EventEmitter = require('events').EventEmitter
 
 function Expect(readStream, writeStream, options) {
   var self = this
@@ -20,13 +19,7 @@ function Expect(readStream, writeStream, options) {
   this.timeout = opts.timeout || 10000
   this.child = opts.process || null
   this._rStream = readStream
-
-  this._rStream.on('data', function(chunk) {
-    self.emit('data', chunk.toString())
-  })
 }
-
-util.inherits(Expect, EventEmitter)
 
 Expect.prototype.expect = function(pattern, callback) {
   var self = this
@@ -52,11 +45,11 @@ Expect.prototype.expect = function(pattern, callback) {
   }
 
   function done(err, output, results) {
-    self.removeListener('data', expListener)
+    self._rStream.removeListener('data', expListener)
     return callback(err, output, results)
   }
 
-  this.on('data', expListener)
+  this._rStream.on('data', expListener)
   return this
 }
 
@@ -66,7 +59,7 @@ Expect.prototype.send = function(string) {
 }
 
 exports.spawn = function(command, args, options) {
-  var child = cp.spawn(command, args, options)
+  var child = childProcess.spawn(command, args, options)
   return new Expect(child.stdout, child.stdin, { process : child })
 }
 

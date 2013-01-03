@@ -78,12 +78,14 @@ describe('stream-expect', function() {
       })
     })
     it('should remove the listener on pattern match', function(done) {
-      var listeners = exp.listeners('data').slice(0)
-      exp.expect(/ipsum/, function(err, match) {
-        var nListeners = exp.listeners('data').slice(0)
-        assert.equal(nListeners.length, listeners.length)
+      var clock = sinon.useFakeTimers()
+      exp.expect(/ipsum/, function(err) {
+        var listeners = exp._rStream.listeners('data').slice(0)
+        assert.equal(listeners.length, 0)
         done()
       })
+      clock.tick(60 * SECOND)
+      clock.restore()
     })
     it('should call callback(err) on timeout', function(done) {
       var clock = sinon.useFakeTimers()
@@ -96,10 +98,9 @@ describe('stream-expect', function() {
     })
     it('should remove the listener on timeout', function(done) {
       var clock = sinon.useFakeTimers()
-      var listeners = exp.listeners('data').slice(0)
       exp.expect(/nothing/, function(err) {
-        var nListeners = exp.listeners('data').slice(0)
-        assert.equal(nListeners.length, listeners.length)
+        var listeners = exp._rStream.listeners('data').slice(0)
+        assert.equal(listeners.length, 0)
         done()
       })
       clock.tick(60 * SECOND)

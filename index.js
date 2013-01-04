@@ -1,5 +1,4 @@
 var childProcess = require('child_process')
-var util = require('util')
 
 function Expect(readStream, writeStream, options) {
   var self = this

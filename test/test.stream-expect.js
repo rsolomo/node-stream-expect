@@ -21,7 +21,7 @@ describe('stream-expect', function() {
       assert.ok(exp.child.pid)
     })
   })
-  
+
   describe('#createExpect()', function() {
     it('should return an instance of Expect', function() {
       var child = spawn('node', [fixture])
@@ -65,7 +65,7 @@ describe('stream-expect', function() {
       assert.equal(exp._wStream, stream)
     })
   })
-  
+
   describe('#expect()', function() {
     it('should return an Expect object', function() {
       var obj = exp.expect(/./, function(){})
@@ -142,7 +142,7 @@ describe('stream-expect', function() {
       clock.restore()
     })
   })
-  
+
   describe('#send()', function() {
     var stub
     beforeEach(function() {

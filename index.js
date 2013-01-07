@@ -3,7 +3,7 @@ var childProcess = require('child_process')
 function Expect(readStream, writeStream, options) {
   var self = this
   var opts
-  
+
   if (!arguments[1]) {
     this._wStream = readStream
     opts = {}
@@ -14,7 +14,7 @@ function Expect(readStream, writeStream, options) {
     this._wStream = arguments[1]
     opts = options || {}
   }
-  
+
   this.timeout = opts.timeout || 10000
   this.child = opts.process || null
   this._rStream = readStream
@@ -23,12 +23,12 @@ function Expect(readStream, writeStream, options) {
 Expect.prototype.expect = function(pattern, callback) {
   var self = this
   var output = ''
-  
+
   var timeoutId = setTimeout(function() {
     var err = new Error('Expect timed out after ' + self.timeout + 'ms')
     return done(err)
   }, self.timeout)
-  
+
   function expListener (chunk) {
     var str = chunk.toString()
     var data = {}

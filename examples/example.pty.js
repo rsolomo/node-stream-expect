@@ -17,8 +17,8 @@ exp.expect(/> |\$ |# /, function(err, output, match) {
   console.log('OUTPUT:\n' + output)
   exp.send('ls\n')
   exp.expect(/> |\$ |# /, function(err, output, match) {
-      if (err) throw err
-      console.log('OUTPUT:\n' + output)
-      term.destroy()
-    })
+    if (err) throw err
+    console.log('OUTPUT:\n' + output)
+    term.destroy()
+  })
 })
